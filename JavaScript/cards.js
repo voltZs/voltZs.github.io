@@ -35,14 +35,26 @@ var answersArray = [
   ["", "", "", ""]
 ]
 
+var masterCards = []
+var answerCards = []
+
+var maxScroll = scrollBody.scrollHeight-realBody.scrollHeight;
+var checkPointSize = maxScroll/(masterArray.length+1);
+var prevBreakPoint
+var nextBreakPoint
+
 
 for(i=0; i < masterArray.length+1; i++){
   var indicator = document.createElement("div");
   indicator.classList.add("pageIndicator");
   indicatorHead.append(indicator);
+  let ind = i;
+  indicator.addEventListener("click", function(){
+    console.log(ind);
+    window.scrollTo(0, (checkPointSize*(ind+1)));
+  })
 }
 updateCurrentIndicator();
-
 function updateCurrentIndicator(){
   for(i = 0; i < indicatorHead.children.length; i++){
     if(currentCard == i){
@@ -52,39 +64,53 @@ function updateCurrentIndicator(){
     }
   }
 }
+for(i=0; i < masterArray.length; i++){
+  createMaster(masterArray[i]);
+  createAnswers(answersArray[i]);
+}
 
 
-function addToMaster(cardString){
+function createMaster(cardString){
   var card = createCard(cardString)
   card.classList.add("masterCard");
   var ratio = (Math.random()*2)-1;
   card.style.transform = "rotate("+ ratio*20 + "deg)";
   masterDeck.append(card);
-  throwToTarget(card);
+  masterCards.push(card);
 }
 
-function removeFromMaster(){
-  snatchFromTarget(masterDeck.lastChild);
+function addToMaster(cardIndex){
+  throwToTarget(masterCards[cardIndex]);
 }
 
-function addToAnswers(answersArray){
+function removeFromMaster(cardIndex){
+  snatchFromTarget(masterCards[cardIndex]);
+}
+
+function createAnswers(answersArray){
   var arraySize = answersArray.length;
-  for(i = 0; i < arraySize; i++ ){
-    var modifier = i-((arraySize-1)/2);
-    var card = createCard(answersArray[i]);
+  var temp = [];
+  for(ind = 0; ind < arraySize; ind++ ){
+    var modifier = ind-((arraySize-1)/2);
+    var card = createCard(answersArray[ind]);
     card.classList.add("answerCard");
     card.style.left = modifier * 120 + "px";
     card.style.transform = "rotate("+ modifier*30 + "deg)";
     answerDeck.append(card);
-    throwToTarget(card);
+    temp.push(card);
+  }
+  answerCards.push(temp);
+}
+
+function addToAnswers(cardIndex){
+  for(i = 0; i < answerCards[cardIndex].length; i++ ){
+    throwToTarget(answerCards[cardIndex][i]);
   }
 }
 
-function removeFromAnswers(numToRemove){
-  console.log("to remove:" + numToRemove)
-  for(i = 0; i < numToRemove; i++){
-    // console.log(answerDeck.children[answerDeck.children.length-1-i]);
-    snatchFromTarget(answerDeck.children[answerDeck.children.length-1-i]);
+function removeFromAnswers(cardIndex){
+  for(i = 0; i < answerCards[cardIndex].length; i++){
+    snatchFromTarget(answerCards[cardIndex][i]);
   }
 }
 
@@ -107,7 +133,6 @@ function snatchFromTarget(cardElement){
   var interval = setInterval(function(){
     if (pos >= initCardPos) {
       clearInterval(interval);
-      cardElement.remove();
     } else {
       pos += speed;
       cardElement.style.top = pos + 'px';
@@ -123,44 +148,32 @@ function createCard(cardString){
   return card
 }
 
-
-document.body.addEventListener("wheel", function(e){
-  if (Math.abs(lastWheelDelta) >= Math.abs(e.wheelDeltaY) && wheelCheckEnabled){
-    console.log("stopped scrolling!!!!!!")
-    wheelCheckEnabled = false;
-    wantToFlip = true;
-  }
-  if (Math.abs(lastWheelDelta) < Math.abs(e.wheelDeltaY) && readyForNext == true){
-    console.log("Now Scrolling!!!!")
-    wheelCheckEnabled = true;
-    readyForNext = false;
-  }
-
-  lastWheelDelta = e.wheelDeltaY;
-
-  if(wantToFlip && cardTimeOutControl){
-    if(lastWheelDelta > 0){
-      console.log("REMOVE CARD")
-      if(currentCard > 0){
-        removeFromMaster();
-        removeFromAnswers(answersArray[currentCard-1].length);
-        currentCard--;
-      }
-    } else {
-      console.log("ADD CARD")
-      if(currentCard < masterArray.length){
-        addToMaster(masterArray[currentCard]);
-        addToAnswers(answersArray[currentCard]);
-        currentCard++;
-      }
-    }
-    updateCurrentIndicator();
-    wantToFlip = false;
-    cardTimeOutControl = false;
-    window.setTimeout(function(){
-      cardTimeOutControl = true;
-      readyForNext = true;
-    }, 400);
-  }
-  window.scrollTo(0, document.body.scrollHeight/2);
+window.addEventListener("scroll", function(){
+  console.log(maxScroll);
+  console.log(window.scrollY);
+  updateDecks();
 })
+
+function updateDecks(){
+  nextBreakPoint = checkPointSize*(currentCard+1);
+  prevBreakPoint = checkPointSize*(currentCard);
+  var scrollPos = window.scrollY;
+  if(scrollPos > nextBreakPoint && currentCard < masterArray.length){
+    console.log("Adding cards");
+    addToMaster(currentCard);
+    addToAnswers(currentCard);
+    currentCard++;
+    console.log("Changing current card to: " + currentCard);
+    updateDecks();
+  }
+  if(scrollPos < prevBreakPoint && currentCard > 0){
+    console.log("removing cards");
+    removeFromMaster(currentCard-1);
+    removeFromAnswers(currentCard-1);
+    currentCard--;
+    console.log("Changing current card to: " + currentCard);
+    updateDecks();
+  }
+  updateCurrentIndicator();
+
+}
