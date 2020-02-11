@@ -7,7 +7,7 @@ var wantToFlip = false;
 var cardTimeOutControl = true;
 var scrollBody = document.getElementById("fakeBody");
 
-var initCardPos = document.getElementById("realBody").scrollHeight*1.2;
+var initCardPos = window.innerHeight;
 var masterDeck = document.getElementById("leftDeck");
 var answerDeck = document.getElementById("rightDeck");
 var currentCard = 0;
