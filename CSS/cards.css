@@ -14,7 +14,8 @@ body {
 }
 
 img{
-  width: 100%;
+  width: 90%;
+  margin: 10px auto;
 }
 
 a{
@@ -90,6 +91,7 @@ div#rightDeck{
 }
 
 .linkCard{
+  color: #086788 !important;
   background-color: #F0C808 !important;
 }
 
