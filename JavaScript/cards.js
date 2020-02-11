@@ -14,25 +14,33 @@ var currentCard = 0;
 var indicatorHead = document.getElementById("head");
 
 var masterArray = [
-  "AAaaaaAA aAAAa",
-  "BBbBBbbb BB b b b bBB",
-  "CC C  c C CC  C C C",
-  "D DdDDdddDD  D",
-  "EEE eEEE e EE",
-  "FF FffFF F",
-  "GG GGGGGggg",
-  "HHHH H Hhh h"
+  "I'm a ____________ currently living in ____________ .",
+  "I enjoy  ____________ that require both ____________ and ____________ skills.",
+  "With a good track for ____________ I'm finishing my ____________ soon .",
+  "And what I'd love is to ____________ .",
+  "I've had loads of fun developing ____________ , ____________ , and ____________ .",
+  "But also did my bit in technical projects like ____________ and ____________ .",
+  "I'll be delighted if you have a look at my ____________ below or ____________ ."
 ]
 
 var answersArray = [
-  ["Hello","World"],
-  ["THis"],
-  ["Is", "Zsolt"],
-  [""],
-  ["", ""],
-  [""],
-  ["", "", ""],
-  ["", "", "", ""]
+  ["Nerd.", "Edinburgh."],
+  ["Solving problems.", "Creative.", "Technical."],
+  ["A first-class degree.", "Bachelor in Computing."],
+  ["Start the career I've been growing my skillset for the past 5 years."],
+  ["Pokédex.", "Say the Same Thing.", "Vent."],
+  ["Tic-Cat-Toe.", "Improvisor."],
+  ["CV / socials.", "Drop me an e-mail."]
+]
+
+var answersLinks = [
+  [],
+  [],
+  [],
+  [],
+  ["https://github.com/voltZs/varga_zsolt_set09103_cw1", "https://github.com/voltZs/varga_zsolt_set09103_cw2", "https://github.com/voltZs/varga_zsolt_set08101_coursework2"],
+  ["https://github.com/voltZs/varga_zsolt_ads", "https://github.com/voltZs/improvisor-group-project"],
+  []
 ]
 
 var masterCards = []
@@ -66,7 +74,7 @@ function updateCurrentIndicator(){
 }
 for(i=0; i < masterArray.length; i++){
   createMaster(masterArray[i]);
-  createAnswers(answersArray[i]);
+  createAnswers(answersArray[i], answersLinks[i]);
 }
 
 
@@ -87,8 +95,10 @@ function removeFromMaster(cardIndex){
   snatchFromTarget(masterCards[cardIndex]);
 }
 
-function createAnswers(answersArray){
+function createAnswers(answersArray, answersLinks){
   var arraySize = answersArray.length;
+  var linksSize = answersLinks.length;
+
   var temp = [];
   for(ind = 0; ind < arraySize; ind++ ){
     var modifier = ind-((arraySize-1)/2);
@@ -96,7 +106,20 @@ function createAnswers(answersArray){
     card.classList.add("answerCard");
     card.style.left = modifier * 120 + "px";
     card.style.transform = "rotate("+ modifier*30 + "deg)";
-    answerDeck.append(card);
+    if(linksSize >0){
+      if(!(answersLinks[ind] === "")){
+        card.classList.add("linkCard");
+        var tag = document.createElement("a");
+        tag.href = answersLinks[ind];
+        tag.append(card);
+        answerDeck.append(tag);
+      } else {
+        answerDeck.append(card);
+      }
+    } else {
+      answerDeck.append(card);
+    }
+
     temp.push(card);
   }
   answerCards.push(temp);
@@ -142,7 +165,7 @@ function snatchFromTarget(cardElement){
 
 function createCard(cardString){
   var card = document.createElement("div");
-  card.innerText = cardString
+  card.innerHTML = cardString
   card.classList.add("card");
   card.style.top = initCardPos + "px";
   return card
