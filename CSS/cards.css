@@ -1,16 +1,16 @@
 html{
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 body {
   padding: none;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   font-size: 1.8em;
-  -ms-overflow-style: none;
+  /* -ms-overflow-style: none; */
 }
 
 img{
