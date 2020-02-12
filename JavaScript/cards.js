@@ -73,18 +73,7 @@ function updateCurrentIndicator(){
   }
 }
 for(i=0; i < masterArray.length; i++){
-  createMaster(masterArray[i]);
-  createAnswers(answersArray[i], answersLinks[i]);
-}
-
-
-function createMaster(cardString){
-  var card = createCard(cardString)
-  card.classList.add("masterCard");
-  var ratio = (Math.random()*2)-1;
-  card.style.transform = "rotate("+ ratio*20 + "deg)";
-  masterDeck.append(card);
-  masterCards.push(card);
+  createDecks(i);
 }
 
 function addToMaster(cardIndex){
@@ -95,32 +84,44 @@ function removeFromMaster(cardIndex){
   snatchFromTarget(masterCards[cardIndex]);
 }
 
-function createAnswers(answersArray, answersLinks){
-  var arraySize = answersArray.length;
-  var linksSize = answersLinks.length;
+function createDecks(i){
+  var arraySize = answersArray[i].length;
+  var linksSize = answersLinks[i].length;
+
+  var mCard = createCard(masterArray[i])
+  mCard.classList.add("masterCard");
+  if(linksSize > 0){
+    var noteDiv = document.createElement("div");
+    noteDiv.innerText = "*Gold cards are clickable!";
+    mCard.append(noteDiv);
+  }
+  var ratio = (Math.random()*2)-1;
+  mCard.style.transform = "rotate("+ ratio*20 + "deg)";
+  masterDeck.append(mCard);
+  masterCards.push(mCard);
 
   var temp = [];
   for(ind = 0; ind < arraySize; ind++ ){
     var modifier = ind-((arraySize-1)/2);
-    var card = createCard(answersArray[ind]);
-    card.classList.add("answerCard");
-    card.style.left = modifier * 120 + "px";
-    card.style.transform = "rotate("+ modifier*30 + "deg)";
+    var aCard = createCard(answersArray[i][ind]);
+    aCard.classList.add("answerCard");
+    aCard.style.left = modifier * 120 + "px";
+    aCard.style.transform = "rotate("+ modifier*(50/arraySize) + "deg)";
     if(linksSize >0){
-      if(!(answersLinks[ind] === "")){
-        card.classList.add("linkCard");
+      if(!(answersLinks[i][ind] === "")){
+        aCard.classList.add("linkCard");
         var tag = document.createElement("a");
-        tag.href = answersLinks[ind];
-        tag.append(card);
+        tag.href = answersLinks[i][ind];
+        tag.append(aCard);
         answerDeck.append(tag);
       } else {
-        answerDeck.append(card);
+        answerDeck.append(aCard);
       }
     } else {
-      answerDeck.append(card);
+      answerDeck.append(aCard);
     }
 
-    temp.push(card);
+    temp.push(aCard);
   }
   answerCards.push(temp);
 }
@@ -165,7 +166,7 @@ function snatchFromTarget(cardElement){
 
 function createCard(cardString){
   var card = document.createElement("div");
-  card.innerHTML = cardString
+  card.innerHTML = "<div>" + cardString + "</div>";
   card.classList.add("card");
   card.style.top = initCardPos + "px";
   return card
@@ -189,7 +190,7 @@ function updateDecks(){
     console.log("Changing current card to: " + currentCard);
     updateDecks();
   }
-  if(scrollPos < prevBreakPoint && currentCard > 0){
+  if(scrollPos <= prevBreakPoint && currentCard > 0){
     console.log("removing cards");
     removeFromMaster(currentCard-1);
     removeFromAnswers(currentCard-1);

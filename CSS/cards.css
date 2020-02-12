@@ -88,6 +88,9 @@ div#rightDeck{
   width: 10em;
   height: 15.5em;
   border-radius: 1em;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
 }
 
 .linkCard{
