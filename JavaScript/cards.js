@@ -113,6 +113,7 @@ function createDecks(i){
         var tag = document.createElement("a");
         tag.href = answersLinks[i][ind];
         tag.append(aCard);
+        tag.target = "_blank";
         answerDeck.append(tag);
       } else {
         answerDeck.append(aCard);
