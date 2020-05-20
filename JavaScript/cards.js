@@ -62,6 +62,7 @@ for(i=0; i < masterArray.length+1; i++){
     window.scrollTo(0, (checkPointSize*(ind+1)));
   })
 }
+
 updateCurrentIndicator();
 function updateCurrentIndicator(){
   for(i = 0; i < indicatorHead.children.length; i++){
@@ -106,7 +107,7 @@ function createDecks(i){
     var aCard = createCard(answersArray[i][ind]);
     aCard.classList.add("answerCard");
     aCard.style.left = modifier * 120 + "px";
-    aCard.style.transform = "rotate("+ modifier*(50/arraySize) + "deg)";
+    aCard.style.transform = "rotate("+ modifier*(80/arraySize) + "deg)";
     if(linksSize >0){
       if(!(answersLinks[i][ind] === "")){
         aCard.classList.add("linkCard");
